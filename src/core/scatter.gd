@@ -271,11 +271,19 @@ func _split_multimesh(set) -> bool:
 					child.queue_free()
 					continue
 				# Create a container parent
-				var container = Spatial.new()
+				var container = SplitMultimeshContainer.new()
 				add_child(container)
 				container.global_transform = self.global_transform
 				container.owner = get_tree().edited_scene_root
 				container.name = "SplitMultimesh"
+				
+				# Copy visible range settings to containers
+				var scatter_item = child.get_parent()
+				if "visible_range_begin" in scatter_item: #sanity check
+					container.visible_range_begin = scatter_item.visible_range_begin
+					container.visible_range_begin_hysteresis = scatter_item.visible_range_begin_hysteresis
+					container.visible_range_end = scatter_item.visible_range_end
+					container.visible_range_end_hysteresis = scatter_item.visible_range_end_hysteresis
 				
 				var is_ok = _create_split_sibling(child, container)
 				if is_ok:
